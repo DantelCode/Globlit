@@ -1,0 +1,80 @@
+<link rel="stylesheet" href="/styles/home.css">
+
+<div class="container">
+
+  <div class="home">
+    <div class="tools glass">
+      <header>
+        <h2>Globlit</h2>
+
+        <div class="searchBar glass-sub">
+          <span class="searchIcon">🔍</span>
+          <input id="searchInput" type="search" placeholder="Search news" aria-label="Search news">
+        </div>
+
+        <label class="profile" for="menu_dp">
+          <input type="checkbox" id="menu_dp" hidden>
+          <div class="profile-img">
+            <img src="/assets/avatar.png" alt="profile">
+          </div>
+          <div class="dropdown glass-sub">
+            <div class="user">
+              <input type="text" id="username" value="User Admin" disabled>
+              <button>edit</button>
+            </div>
+            <a href="/auth/signout">Sign out</a>
+          </div>
+        </label>
+
+        <button id="themeToggle" class="themeBtn glass-sub" aria-label="Toggle theme">🌙</button>
+      </header>
+
+      <nav class="nav" id="topicsNav"></nav>
+    </div>
+
+    <!-- FEEDS -->
+    <section class="feedsSection">
+      <h2 id="feedText">For You</h2>
+      <div class="feeds" id="feeds"></div>
+    </section>
+
+  </div>
+
+  <article class="open">
+    <div class="article-content">
+      
+    <header>
+      <button>back</button>
+
+      <div class="newsTools">
+        <button aria-label="Share article">share</button>
+        <button aria-label="Read article out loud">read out</button>
+      </div>
+    </header>
+
+    <div class="newsBrief">
+      <div class="newsImg">
+        <img src="#" alt="news-image">
+      </div>
+      <p>Breaking News Headline 1 oijoihoiuuhiuhijiubjib ihiblyuguib oihulhgviu</p>
+    </div>
+
+    <div class="newsAuthor">
+      <div class="author">
+        <div class="authorImg">
+          <img src="#" alt="author-image">
+        </div>
+        <p>BBC News</p>
+      </div>
+
+      <small>28 Dec 2025</small>
+    </div>
+
+    <p class="content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Enim ab natus totam error itaque asperiores optio nisi temporibus, consequatur a iusto aut tempore laborum neque, nostrum impedit porro aliquam eaque?</p>
+    </div>
+
+    <div class="no-selection">No News Selected</div>
+  </article>
+</div>
+
+<script src="/scripts/news.js"></script>
