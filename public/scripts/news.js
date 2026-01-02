@@ -12,9 +12,6 @@
 // Client should call a server-side proxy that uses the NEWS_API_KEY from env
 const NEWS_API_BASE = "/api/news"; // Server endpoints (we'll add server-side routes)
 
-// Categories supported by NewsAPI (used for top/headlines endpoints)
-const CATEGORIES = ["general", "business", "entertainment", "health", "science", "sports", "technology"];
-
 // backend endpoints (Node + MongoDB)
 const API = {
   me: "/api/me",                 // GET -> { username }
@@ -38,7 +35,7 @@ const shareBtn = article.querySelector(".newsTools button:nth-child(1)");
 const readBtn = article.querySelector(".newsTools button:nth-child(2)");
 const articleImg = article.querySelector(".newsImg img");
 const articleTitle = article.querySelector(".newsBrief p");
-const articleSource = article.querySelector(".author p");
+const articleSource = article.querySelector(".author");
 const articleDate = article.querySelector(".newsAuthor small");
 const articleContent = article.querySelector(".content");
 
@@ -58,8 +55,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadUser();
   await detectCountry();
   await loadTopics();
-  await loadHotNews();
   await loadFeeds();
+
+  // Close profile dropdown when clicking outside or pressing Escape
+  const menuCheckbox = document.getElementById('menu_dp');
+  const profileEl = document.querySelector('.profile');
+
+  document.addEventListener('click', (e) => {
+    if (!menuCheckbox || !menuCheckbox.checked) return;
+    if (!profileEl || profileEl.contains(e.target)) return;
+    menuCheckbox.checked = false;
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menuCheckbox && menuCheckbox.checked) {
+      menuCheckbox.checked = false;
+    }
+  });
 });
 
 /* ================== THEME ================== */
@@ -78,9 +90,24 @@ function initTheme() {
 async function loadUser() {
   try {
     const res = await fetch(API.me);
-    if (!res.ok) return;
+    const profileImg = document.querySelector('.profile .profile-img img');
+    if (!res.ok) {
+      usernameInput.value = "User";
+      if (profileImg) profileImg.src = '/assets/avatar.png';
+      return;
+    }
     const data = await res.json();
-    usernameInput.value = data.username || "User";
+
+    // username compatibility: backend may return `username` or `name`
+    const name = data.username || data.name || "User";
+    usernameInput.value = name;
+
+    // profile image
+    if (profileImg) {
+      profileImg.src = data.avatar || '/assets/avatar.png';
+      profileImg.alt = name;
+    }
+
   } catch (err) {
     console.error("loadUser error", err);
   }
@@ -96,17 +123,28 @@ editBtn.addEventListener("click", async () => {
     if (!newName) return;
 
     try {
-      await fetch(API.updateName, {
+      const res = await fetch(API.updateName, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: newName })
       });
 
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || 'Failed to update name');
+      }
+
+      // reflect change in UI
       usernameInput.disabled = true;
       editBtn.textContent = "edit";
+
+      // close dropdown if open
+      const menuCheckbox = document.getElementById('menu_dp');
+      if (menuCheckbox) menuCheckbox.checked = false;
+
     } catch (err) {
       console.error("updateName error", err);
-      alert("Failed to update name");
+      alert(err.message || "Failed to update name");
     }
   }
 });
@@ -140,6 +178,12 @@ function sortByDate(list) {
   return list.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
 }
 
+// Capitalize topic / label strings (handles multi-word topics)
+function capitalize(str) {
+  if (!str) return "";
+  return String(str).replace(/\b\w/g, c => c.toUpperCase());
+}
+
 /* ================== NEWS API HELPERS (via server proxy) ================== */
 // Returns { articles: Array, error: null|string }
 async function fetchNews(endpoint) {
@@ -163,148 +207,45 @@ async function fetchNews(endpoint) {
 /* ================== TOPICS ================== */
 async function loadTopics() {
   const topics = [
-    ...CATEGORIES,
-    "politics","world","finance","education","food","travel","fashion","music",
-    "gaming","crypto","energy","climate","space"
+    "general", "business", "entertainment", "health", "science", "sports", "technology",
+    "politics", "world", "finance", "education", "food", "travel", "fashion", "music",
+    "gaming", "crypto", "energy", "climate", "space"
   ];
 
   topicsNav.innerHTML = "";
   topics.slice(0, 20).forEach((t, i) => {
     const span = document.createElement("span");
     span.className = "topic" + (i === 0 ? " active" : "");
-    span.textContent = t;
+    span.textContent = capitalize(t);
     span.onclick = async () => {
       document.querySelectorAll(".topic").forEach(x => x.classList.remove("active"));
       span.classList.add("active");
       currentTopic = t;
-      feedText.textContent = t === "general" ? "For You" : t;
+      feedText.textContent = t === "general" ? "For You" : capitalize(t);
       await loadFeeds();
     };
     topicsNav.appendChild(span);
   });
 }
 
-/* ================== HOT NEWS ================== */
-async function loadHotNews() {
-  hotFeedsEl.innerHTML = "";
-
-  // Use a reduced set of categories (supported by NewsAPI) to fetch top headlines
-  const requests = CATEGORIES.map(cat =>
-    fetchNews(`/top?country=${country}&category=${encodeURIComponent(cat)}&pageSize=5`)
-  );
-
-  const results = await Promise.all(requests);
-  const anyError = results.find(r => r.error);
-  if (anyError) {
-    const msg = anyError.error || 'Failed to load hot news';
-    const p = document.createElement('p');
-    p.style.padding = '1rem';
-    p.style.opacity = '.8';
-    p.textContent = msg;
-    hotFeedsEl.appendChild(p);
-    return;
-  }
-
-  let articles = results.flatMap(r => r.articles || []);
-
-  articles = dedupeArticles(articles)
-    .filter(a => a.urlToImage && a.title)
-    .slice(0, 12);
-
-  articles.forEach(a => hotFeedsEl.appendChild(createHotCard(a)));
-}
-
-function createHotCard(a) {
-  const div = document.createElement("div");
-  div.className = "hotFeed";
-
-  const img = document.createElement("img");
-  img.src = a.urlToImage || '/assets/placeholder.jpg';
-  img.alt = a.title || 'news image';
-
-  const overlay = document.createElement("div");
-  overlay.className = "overlay";
-
-  const source = document.createElement("div");
-  source.className = "source";
-
-  const hotFeedImg = document.createElement("div");
-  hotFeedImg.className = "hotFeedImg";
-  const icon = document.createElement("img");
-  icon.src = "/assets/news.png";
-  icon.alt = "source";
-  hotFeedImg.appendChild(icon);
-
-  const small = document.createElement("small");
-  small.textContent = a.source?.name || "";
-
-  source.appendChild(hotFeedImg);
-  source.appendChild(small);
-
-  const h3 = document.createElement("h3");
-  h3.textContent = a.title || "";
-
-  overlay.appendChild(source);
-  overlay.appendChild(h3);
-
-  div.appendChild(img);
-  div.appendChild(overlay);
-
-  div.onclick = () => openArticle(a);
-  return div;
-}
-
 /* ================== FEEDS ================== */
 async function loadFeeds() {
   feedsEl.innerHTML = "";
-  feedText.textContent = currentTopic === "general" ? "For You" : currentTopic;
+  feedText.textContent = currentTopic === "general" ? "For You" : capitalize(currentTopic);
 
   let articles = [];
 
-  if (currentTopic === "general") {
-    // Merge top headlines for supported categories
-    const requests = CATEGORIES.map(cat =>
-      fetchNews(`/top?country=${country}&category=${encodeURIComponent(cat)}&pageSize=6`)
-    );
-
-    const results = await Promise.all(requests);
-    const anyError = results.find(r => r.error);
-    if (anyError) {
-      const p = document.createElement('p');
-      p.style.padding = '1rem';
-      p.style.opacity = '.8';
-      p.textContent = anyError.error || 'Failed to load feeds';
-      feedsEl.appendChild(p);
-      return;
-    }
-
-    articles = results.flatMap(r => r.articles || []);
-
-  } else if (CATEGORIES.includes(currentTopic)) {
-    const { articles: a, error } = await fetchNews(`/top?country=${country}&category=${encodeURIComponent(currentTopic)}&pageSize=20`);
-    if (error) {
-      const p = document.createElement('p');
-      p.style.padding = '1rem';
-      p.style.opacity = '.8';
-      p.textContent = error;
-      feedsEl.appendChild(p);
-      return;
-    }
-    articles = a;
-
-  } else {
-    // keyword topics use search/everything proxy
-    const { articles: a, error } = await fetchNews(`/search?q=${encodeURIComponent(currentTopic)}&language=en&sortBy=relevancy&pageSize=20`);
-    if (error) {
-      const p = document.createElement('p');
-      p.style.padding = '1rem';
-      p.style.opacity = '.8';
-      p.textContent = error;
-      feedsEl.appendChild(p);
-      return;
-    }
-    articles = a;
+  // keyword topics use search/everything proxy
+  const { articles: a, error } = await fetchNews(`/search?q=${encodeURIComponent(currentTopic)}&language=en&sortBy=relevancy&pageSize=20`);
+  if (error) {
+    const p = document.createElement('p');
+    p.style.padding = '1rem';
+    p.style.opacity = '.8';
+    p.textContent = error;
+    feedsEl.appendChild(p);
+    return;
   }
+  articles = a;
 
   articles = sortByDate(dedupeArticles(articles));
 
@@ -383,7 +324,7 @@ function openArticle(a) {
   articleImg.src = a.urlToImage || "/assets/placeholder.jpg";
   articleImg.alt = a.title || 'article image';
   articleTitle.textContent = a.title || "";
-  articleSource.textContent = a.source?.name || "";
+  articleSource.textContent = `By: ${a.source?.name}` || "";
   articleDate.textContent = a.publishedAt ? new Date(a.publishedAt).toDateString() : "";
 
   // Build content safely
