@@ -6,7 +6,15 @@ body {
     --blur: 14px;
     --sub-blur: 1px;
     --transition: 0.35s cubic-bezier(.4, 0, .2, 1);
-}
+
+    /* App base styles */
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, Arial, system-ui, sans-serif;
+    transition: background var(--transition), color var(--transition);
+    min-height: 100vh;
+    overflow: hidden;
+} 
 
 /* Light mode */
 body {
@@ -28,3 +36,13 @@ body.dark {
     --muted: rgba(234, 241, 255, 0.65);
     --muted-tint: rgb(235, 240, 248);
 }
+
+/* Shared glass panel (used across app) */
+.glass {
+  background: var(--panel);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  transition: background var(--transition), box-shadow var(--transition);
+} 

@@ -4,6 +4,7 @@ require("./config/passport");
 
 const express = require("express");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const expressLayouts = require("express-ejs-layouts");
 const mongoose = require("mongoose");
 const passport = require("passport");
@@ -31,13 +32,31 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
 // Sessions
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-  })
-);
+if (!process.env.SESSION_SECRET) console.warn('WARNING: SESSION_SECRET is not set. Sessions will be insecure.');
+
+let sessionStore;
+if (process.env.MONGO_URI) {
+  sessionStore = MongoStore.create({ mongoUrl: process.env.MONGO_URI });
+} else {
+  console.warn('WARNING: MONGO_URI is not set. Using in-memory session store (not for development).');
+  sessionStore = null;
+}
+
+const sessionConfig = {
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    httpOnly: true
+  }
+};
+
+if (sessionStore) sessionConfig.store = sessionStore;
+
+app.use(session(sessionConfig));
 
 // Passport
 app.use(passport.initialize());
@@ -61,6 +80,10 @@ app.get("/signin", (req, res) => {
   res.render("signin", { title: "Globlit - Signin" });
 });
 
+// app.get("/dashboard", (req, res) => {
+//   res.render("home", { title: "Globlit" });
+// });
+
 app.get("/dashboard", ensureAuth, (req, res) => {
   if (!req.isAuthenticated()) return res.redirect("/signin");
   res.render("home", { title: "Globlit" });
@@ -68,7 +91,7 @@ app.get("/dashboard", ensureAuth, (req, res) => {
 
 
 // Start server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 const NODE_ENV = process.env.NODE_ENV;
 
 if (!process.env.NEWS_API_KEY) console.warn('WARNING: NEWS_API_KEY is not set. News proxy endpoints will fail.');

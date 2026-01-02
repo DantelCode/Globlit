@@ -15,8 +15,9 @@ function isAuth(req, res, next) {
  */
 router.get("/me", isAuth, (req, res) => {
   res.json({
-    username: req.user.username,
+    username: req.user.name || req.user.username || null,
     email: req.user.email,
+    avatar: req.user.avatar || null,
   });
 });
 
@@ -31,7 +32,8 @@ router.post("/user/name", isAuth, async (req, res) => {
     return res.status(400).json({ error: "Invalid username" });
   }
 
-  req.user.username = username;
+  // store consistently on `name` (legacy `username` kept for compatibility)
+  req.user.name = username;
   await req.user.save();
 
   res.json({ success: true, username });
