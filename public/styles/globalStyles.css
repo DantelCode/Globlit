@@ -1,0 +1,39 @@
+body {
+    --blue: #4da3ff;
+    --blue-soft: rgba(77, 163, 255, 0.15);
+
+    --radius: 18px;
+    --blur: 14px;
+    --sub-blur: 1px;
+    --transition: 0.35s cubic-bezier(.4, 0, .2, 1);
+
+    /* App base styles */
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, Arial, system-ui, sans-serif;
+    transition: background var(--transition), color var(--transition);
+    min-height: 100vh;
+    overflow-y: auto;
+} 
+
+/* Light mode */
+body {
+    --bg: #f4f7fb;
+    --panel: rgba(255, 255, 255, 0.65);
+    --sub-panel: rgba(255, 255, 255, 0.5);
+    --border: rgba(0, 0, 0, 0.08);
+    --text: #0d1b2a;
+    --muted: rgba(13, 27, 42, 0.6);
+    --muted-tint: rgba(13, 27, 42, 1)
+}
+
+/* Dark mode */
+body.dark {
+    --bg: #0b1220;
+    --panel: rgba(16, 25, 40, 0.65);
+    --sub-panel: rgba(16, 25, 40, 0.5);
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #eaf1ff;
+    --muted: rgba(234, 241, 255, 0.65);
+    --muted-tint: rgb(235, 240, 248);
+}
