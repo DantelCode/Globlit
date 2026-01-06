@@ -58,7 +58,7 @@ if (sessionStore) sessionConfig.store = sessionStore;
 
 app.use(session(sessionConfig));
 
-Passport
+// Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -96,4 +96,5 @@ if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`GLOBLIT SERVER STARTED AT PORT ${PORT}`);
   });
+
 }
