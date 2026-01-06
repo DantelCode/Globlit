@@ -7,15 +7,16 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL:
+        process.env.NODE_ENV === "production"
+          ? "https://globlit.onrender.com/auth/google/callback"
+          : "http://localhost:3000/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Check if user exists
         let user = await User.findOne({ googleId: profile.id });
 
         if (!user) {
-          // Create new user
           user = await User.create({
             googleId: profile.id,
             name: profile.displayName,
@@ -42,3 +43,4 @@ passport.deserializeUser(async (id, done) => {
   const user = await User.findById(id);
   done(null, user);
 });
+
