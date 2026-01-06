@@ -4,6 +4,7 @@ require("./config/passport");
 
 const express = require("express");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const expressLayouts = require("express-ejs-layouts");
 const mongoose = require("mongoose");
 const passport = require("passport");
@@ -31,13 +32,31 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
 // Sessions
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-  })
-);
+if (!process.env.SESSION_SECRET) console.warn('WARNING: SESSION_SECRET is not set. Sessions will be insecure.');
+
+let sessionStore;
+if (process.env.MONGO_URI) {
+  sessionStore = MongoStore.create({ mongoUrl: process.env.MONGO_URI });
+} else {
+  console.warn('WARNING: MONGO_URI is not set. Using in-memory session store (not for development).');
+  sessionStore = null;
+}
+
+const sessionConfig = {
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    httpOnly: true
+  }
+};
+
+if (sessionStore) sessionConfig.store = sessionStore;
+
+app.use(session(sessionConfig));
 
 // Passport
 app.use(passport.initialize());
@@ -50,7 +69,7 @@ function ensureAuth(req, res, next) {
 
 // Routes
 app.get('/', (req, res) => {
-  res.redirect("/dashboard");
+  res.render("index", { title: 'Globlit' });
 });
 
 app.use("/auth", require("./routes/auth"));
@@ -61,22 +80,25 @@ app.get("/signin", (req, res) => {
   res.render("signin", { title: "Globlit - Signin" });
 });
 
-app.get("/dashboard", ensureAuth, (req, res) => {
+app.get('/privacy', (req, res) => {
+  res.render('privacy', { title: 'Globlit - Privacy Policy' });
+});
+
+app.get("/home", ensureAuth, (req, res) => {
   if (!req.isAuthenticated()) return res.redirect("/signin");
   res.render("home", { title: "Globlit" });
 });
 
 
 // Start server
-const PORT = process.env.PORT || 3000;
-const NODE_ENV = process.env.NODE_ENV;
+const PORT = process.env.PORT;
 
 if (!process.env.NEWS_API_KEY) console.warn('WARNING: NEWS_API_KEY is not set. News proxy endpoints will fail.');
 
 // Start server only when this file is run directly. This makes local dev and requires/imports safe.
 if (require.main === module) {
   app.listen(PORT, () => {
-    console.log(`GLOBLIT SERVER STARTED AT PORT ${PORT} (env=${NODE_ENV})`);
+    console.log(`GLOBLIT SERVER STARTED AT PORT ${PORT}`);
   });
 }
 

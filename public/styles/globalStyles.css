@@ -6,7 +6,15 @@ body {
     --blur: 14px;
     --sub-blur: 1px;
     --transition: 0.35s cubic-bezier(.4, 0, .2, 1);
-}
+
+    /* App base styles */
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, Arial, system-ui, sans-serif;
+    transition: background var(--transition), color var(--transition);
+    min-height: 100vh;
+    overflow-y: auto;
+} 
 
 /* Light mode */
 body {
@@ -19,6 +27,7 @@ body {
     --muted-tint: rgba(13, 27, 42, 1)
 }
 
+/* Dark mode */
 body.dark {
     --bg: #0b1220;
     --panel: rgba(16, 25, 40, 0.65);

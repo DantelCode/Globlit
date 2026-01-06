@@ -18,7 +18,7 @@ router.get(
     failureRedirect: "/signin",
   }),
   (req, res) => {
-    res.redirect("/dashboard");
+    res.redirect("/home");
   }
 );
 

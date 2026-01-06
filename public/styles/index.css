@@ -1,0 +1,644 @@
+* {
+    margin: 0;
+    padding: 0;
+    outline: none;
+    border: none;
+    box-sizing: border-box;
+}
+
+/* Shared glass panel (used across app) */
+.glass {
+    background: var(--panel);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    border: 1px solid var(--border);
+    transition: background var(--transition), box-shadow var(--transition);
+}
+
+/* Splash overlay */
+#splash {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(180deg, rgba(16, 25, 40, 1), rgba(16, 25, 40, 1));
+    z-index: 9999;
+    backdrop-filter: blur(var(--blur));
+    transition: opacity .5s ease, visibility .4s ease;
+}
+
+.splash-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.splash-globe {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    will-change: transform, opacity;
+    transition: transform .9s cubic-bezier(.22, .9, .2, 1), opacity .45s;
+}
+
+.splash-globe svg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 150px;
+}
+
+.splash-globe .earth {
+    transform-style: preserve-3d;
+    transform-origin: 50% 50%;
+}
+
+.earth.rotate-once {
+    animation: earth-rotate 900ms cubic-bezier(.2, .9, .2, 1) 1 both;
+    transform-style: preserve-3d;
+    transform-origin: 50% 50%;
+    backface-visibility: hidden;
+}
+
+@keyframes earth-rotate {
+    from {
+        transform: rotateZ(0deg);
+    }
+
+    to {
+        transform: rotateZ(360deg);
+    }
+}
+
+/* Header globe base state (no continuous spin) */
+.header-globe {
+    transform-style: preserve-3d;
+    transform-origin: 50% 50%;
+    backface-visibility: hidden;
+}
+
+/* After moving, fade out splash */
+#splash.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Progress bar */
+.progress-bar {
+    margin-top: 180px;
+    width: 280px;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--blue), var(--blue));
+    transition: width 180ms linear;
+}
+
+/* Moving helper class used while animating */
+.splash-globe.moving {
+    transition: transform .9s cubic-bezier(.22, .9, .2, 1), width .9s, height .9s, opacity .45s;
+}
+
+/* Header */
+header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background: var(--panel);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+}
+
+#header-logo svg {
+    width: 50px;
+    height: 50px;
+    display: block;
+}
+
+.logo-text {
+    display: inline-block;
+    margin-left: .4rem;
+    color: var(--text);
+    opacity: 0;
+    transform: translateY(-2px);
+    font-family: 'Poppins', Inter, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text);
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: .12em solid transparent;
+}
+
+.logo-text.revealed {
+    opacity: 1;
+    transition: opacity .6s var(--transition), transform .45s var(--transition);
+    transform: translateY(0);
+}
+
+#logo-text.typing {
+    animation: blink-caret 1s step-end infinite;
+    border-right-width: .12em;
+}
+
+@keyframes blink-caret {
+    0% {
+        border-color: transparent;
+    }
+
+    50% {
+        border-color: var(--muted);
+    }
+
+    100% {
+        border-color: transparent;
+    }
+}
+
+/* Sign in button */
+.signin-btn {
+    padding: .5rem .9rem;
+    border-radius: 10px;
+    background: linear-gradient(90deg, rgba(77, 163, 255, 0.06), rgba(77, 163, 255, 0.03));
+    color: var(--text);
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: ease all 400ms;
+}
+
+.signin-btn:hover {
+    box-shadow: 0 4px 20px rgba(77, 163, 255, 0.08);
+    background: linear-gradient(90deg, rgba(77, 163, 255, 0.12), rgba(77, 163, 255, 0.06));
+}
+
+/* entrance animation applied after splash */
+.signin-btn.visible {
+    animation: btn-entrance .45s cubic-bezier(.2, .9, .2, 1) both;
+}
+
+@keyframes btn-entrance {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.hero {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* Hero parallax & CTA Buttons */
+.hero-parallax {
+    overflow: visible;
+}
+
+.hero-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    flex-direction: column;
+    padding-left: 5rem;
+}
+
+.hero-title {
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    font-weight: 800;
+    margin-bottom: .5rem;
+}
+
+.hero-sub {
+    color: var(--muted);
+    margin-bottom: 1rem;
+}
+
+.cta-wrap {
+    display: flex;
+    gap: .8rem;
+    align-items: center;
+}
+
+.cta-btn {
+    padding: .75rem 1.15rem;
+    background: linear-gradient(90deg, var(--blue) 0%, #2e88ff 100%);
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    box-shadow: 0 8px 30px rgba(46, 136, 255, 0.12);
+    transform: translateZ(0);
+    display: inline-block;
+    transition: transform .22s cubic-bezier(.2, .9, .25, 1), box-shadow .22s ease, filter .22s ease, background-position .35s ease;
+    position: relative;
+    overflow: hidden;
+    will-change: transform, box-shadow;
+}
+
+.cta-btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(60% 60% at 10% 10%, rgba(255, 255, 255, 0.06), transparent 40%);
+    opacity: 0;
+    transition: opacity .25s ease, transform .25s ease;
+    pointer-events: none;
+}
+
+.cta-btn:hover,
+.cta-btn:focus-visible {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 46px rgba(46, 136, 255, 0.18);
+    filter: saturate(1.02);
+}
+
+.cta-btn:hover::after {
+    opacity: 1;
+    transform: translateY(-4px);
+}
+
+.hero-graphic {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Decorative globe in hero */
+.globe-deco {
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: url("/assets/globe.png");
+    background-position: center;
+    background-size: cover;
+    object-fit: cover;
+    object-position: center;
+    box-shadow: inset 0 -12px 36px rgba(2, 6, 23, 0.04), 0 12px 26px rgba(2, 6, 23, 0.06);
+    display: grid;
+    place-items: center;
+    transform: translateZ(0);
+    transition: transform .8s cubic-bezier(.2, .9, .2, 1), width .6s ease, height .6s ease, box-shadow .45s ease, filter .45s ease;
+}
+
+/* centered/enlarged globe state when user scrolls into features */
+.globe-deco.centered {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-40%, 80%) scale(1.35);
+    width: 500px;
+    height: 500px;
+    z-index: 1200;
+    filter: brightness(1.03) saturate(1.06);
+}
+
+/* when centered, slightly reduce parallax interference */
+.globe-deco.centered svg,
+.globe-deco.centered .globe-overlay {
+    transform: none !important;
+}
+
+/* Feature cards (absolute layout) */
+.features {
+    padding: 2rem;
+    overflow: visible;
+    height: 100vh;
+    height: 100dvh;
+}
+
+.features-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    position: absolute;
+    width: 320px;
+    background: linear-gradient(180deg, rgba(133, 133, 133, 0.6), rgba(121, 121, 121, 0.4));
+    border-radius: 14px;
+    padding: 1.25rem;
+    backdrop-filter: blur(var(--sub-blur));
+    border: 1px solid var(--border);
+    box-shadow: 0 18px 46px rgba(2, 6, 23, 0.06);
+    transition: transform .36s cubic-bezier(.2, .9, .2, 1), box-shadow .36s, opacity .6s ease;
+    transform-style: preserve-3d;
+    opacity: 0;
+    user-select: none;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px) rotateX(4deg) scale(1.03);
+    box-shadow: 0 28px 66px rgba(2, 6, 23, 0.08);
+}
+
+.feature-card h3 {
+    margin-bottom: .4rem;
+}
+
+.feature-card p {
+    color: var(--text);
+    font-size: .95rem;
+}
+
+/* Position map (alternating corners) */
+.feature-card:nth-child(1) {
+    top: 8%;
+    left: 8%;
+}
+
+.feature-card:nth-child(2) {
+    top: 8%;
+    right: 0;
+}
+
+.feature-card:nth-child(3) {
+    bottom: 8%;
+    left: 8%;
+}
+
+.feature-card:nth-child(4) {
+    bottom: 8%;
+    right: 0;
+}
+
+/* Make feature cards visible when in view */
+.feature-card.in-view {
+    opacity: 1;
+    transform: none;
+}
+
+/* Signup & final CTA */
+.signup-cta {
+    padding: 4rem 2rem;
+    display: grid;
+    height: 50vh;
+    height: 50dvh;
+    place-items: center;
+    background: linear-gradient(180deg, rgba(77, 163, 255, 0.02), rgba(255, 255, 255, 0));
+}
+
+.signup-card {
+    width: min(860px, 94%);
+    padding: 2.4rem;
+    border-radius: 16px;
+    text-align: center;
+    display: grid;
+    gap: 8px;
+    transition: transform .25s cubic-bezier(.2, .9, .2, 1), box-shadow .25s;
+}
+
+.signup-card h2 {
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+    margin-bottom: .6rem;
+}
+
+.signup-card p {
+    color: var(--muted);
+    margin-bottom: 1rem;
+}
+
+.signup-card a {
+    transition: 400ms ease all;
+}
+
+.signup-card a:hover {
+    transform: translateY(-6px);
+}
+
+/* Reveal on scroll */
+.reveal {
+    opacity: 0;
+    transform: translateY(16px) scale(.995);
+    transition: transform .6s cubic-bezier(.2, .9, .2, 1), opacity .6s ease;
+    will-change: transform, opacity;
+}
+
+.reveal.in-view {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* For absolutely positioned feature cards, reveal only with fade to avoid overwriting positional transforms */
+.features .feature-card.reveal {
+    transform: none;
+    opacity: 0;
+    transition: opacity .6s ease, transform .36s cubic-bezier(.2, .9, .2, 1);
+}
+
+.features .feature-card.reveal.in-view {
+    opacity: 1;
+}
+
+/* Footer styles */
+.site-footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    color: var(--muted-tint);
+    background: var(--panel);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+}
+
+.site-footer .footer-brand {
+    font-family: "French Script MT", "Brush Script MT", "Snell Roundhand", cursive;
+    font-weight: 400;
+    font-size: 1.5em;
+    color: var(--blue);
+    text-decoration: none;
+    margin-right: 8px;
+    letter-spacing: 0.4px;
+}
+
+.site-footer .footer-meta {
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.privacy-link {
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--text);
+    transition: 100ms ease all;
+}
+
+.privacy-link:hover {
+    text-decoration: underline;
+    color: var(--blue);
+}
+
+.site-footer .footer-link {
+    text-decoration: none;
+    color: var(--muted-tint);
+    border: 1px solid transparent;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background var(--transition), transform .12s ease;
+}
+
+.site-footer .footer-link:hover {
+    background: rgba(255, 255, 255, 0.04);
+    transform: translateY(-2px);
+}
+
+.site-footer .footer-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.footer-social {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.footer-social .social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    color: var(--muted-tint);
+    background: transparent;
+    border: 1px solid transparent;
+    transition: background var(--transition), color .12s ease, transform .12s ease;
+}
+
+.footer-social .social-link .icon {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+.footer-social .social-link:hover {
+    color: var(--blue);
+    background: rgba(77, 163, 255, 0.06);
+    transform: translateY(-2px);
+}
+
+/* Responsive layouts */
+@media (max-width: 900px) {
+    .hero {
+        position: relative;
+        grid-template-columns: 1fr;
+    }
+
+    .hero-content {
+        position: absolute;
+        z-index: 10;
+        padding: 0;
+        width: 90%;
+        place-self: center;
+    }
+
+    .hero-title {
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    .hero-sub {
+        color: var(--text);
+    }
+
+    .hero a {
+        place-self: center;
+    }
+
+    .features {
+        overflow: hidden;
+    }
+
+    .globe-deco {
+        opacity: .5;
+    }
+
+    .globe-deco.centered {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translate(0%, 90%) scale(1.1);
+        width: 90vw;
+        height: 90vw;
+    }
+
+    .feature-card {
+        height: fit-content;
+    }
+
+    .feature-card:nth-child(1) {
+        top: 2%;
+        left: 6%;
+    }
+
+    .feature-card:nth-child(2) {
+        top: 25%;
+        right: 6%;
+    }
+
+    .feature-card:nth-child(3) {
+        top: 45%;
+        left: 6%;
+    }
+
+    .feature-card:nth-child(4) {
+        top: 68%;
+        right: 6%;
+    }
+}
+
+/* Small responsive tweak */
+@media (max-width: 520px) {
+    .splash-globe {
+        width: 120px;
+        height: 120px;
+    }
+}
