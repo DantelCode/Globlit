@@ -47,11 +47,11 @@ const sessionConfig = {
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    httpOnly: true
-  }
+  maxAge: 14 * 24 * 60 * 60 * 1000,
+  secure: true,
+  sameSite: "none",
+  httpOnly: true
+}
 };
 
 if (sessionStore) sessionConfig.store = sessionStore;
@@ -95,3 +95,4 @@ if (!process.env.NEWS_API_KEY) console.warn('WARNING: NEWS_API_KEY is not set. N
 app.listen(process.env.PORT, () => {
   console.log(`GLOBLIT SERVER STARTED AT PORT ${process.env.PORT}`);
 });
+
