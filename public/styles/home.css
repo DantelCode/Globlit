@@ -180,6 +180,18 @@
 }
 
 @media (max-width: 800px) {
+.profile {
+  width: 40px;
+  height: 40px;
+}
+
+.searchBar {
+  padding: .1rem 0.5rem;
+}
+  .tools header { gap: 4px; }
+.home .right_header {
+  gap: 4px;
+}
   .themeBtn {
     width: 40px;
     height: 40px;
@@ -842,3 +854,4 @@ hr {
   opacity: .6;
 
 }
+
