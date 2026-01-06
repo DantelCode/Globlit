@@ -8,6 +8,7 @@ const MongoStore = require("connect-mongo");
 const expressLayouts = require("express-ejs-layouts");
 const mongoose = require("mongoose");
 const path = require("path");
+const passport = require("passport");
 
 // MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -103,3 +104,4 @@ if (require.main === module) {
 
 
 module.exports = app; // Vercel usage
+
