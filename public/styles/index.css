@@ -591,6 +591,7 @@ header {
 
     .hero-sub {
         color: var(--text);
+        text-align: center;
     }
 
     .hero a {

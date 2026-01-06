@@ -9,9 +9,9 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL:
         process.env.NODE_ENV === "production"
-          ? "/auth/google/callback"
-          : "/auth/google/callback",
-    },
+          ? "https://globlit.onrender.com/auth/google/callback"
+          : "http://localhost:3000/auth/google/callback",
+          },
     async (accessToken, refreshToken, profile, done) => {
       try {
         let user = await User.findOne({ googleId: profile.id });
@@ -43,5 +43,3 @@ passport.deserializeUser(async (id, done) => {
   const user = await User.findById(id);
   done(null, user);
 });
-
-

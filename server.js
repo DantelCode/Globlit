@@ -34,33 +34,29 @@ app.use(express.static(path.join(__dirname, "public")));
 // Sessions
 if (!process.env.SESSION_SECRET) console.warn('WARNING: SESSION_SECRET is not set. Sessions will be insecure.');
 
-let sessionStore;
-if (process.env.MONGO_URI) {
-  sessionStore = MongoStore.create({ mongoUrl: process.env.MONGO_URI });
-} else {
-  console.warn('WARNING: MONGO_URI is not set. Using in-memory session store (not for development).');
-  sessionStore = null;
-}
+app.set("trust proxy", 1);
+
+const sessionStore = MongoStore.create({
+  mongoUrl: process.env.MONGO_URI
+});
 
 const sessionConfig = {
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  store: sessionStore,
   cookie: {
-  maxAge: 14 * 24 * 60 * 60 * 1000,
-  secure: true,
-  sameSite: "none",
-  httpOnly: true
-}
+    maxAge: 14 * 24 * 60 * 60 * 1000,
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
+  }
 };
 
-if (sessionStore) sessionConfig.store = sessionStore;
-
 app.use(session(sessionConfig));
-
-// Passport
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 function ensureAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -85,8 +81,8 @@ app.get('/privacy', (req, res) => {
 });
 
 app.get("/home", ensureAuth, (req, res) => {
-  if (!req.isAuthenticated()) return res.redirect("/signin");
-  res.render("home", { title: "Globlit" });
+  console.log("AUTH CHECK:", req.isAuthenticated(), req.user);
+  res.render("home", { title: 'Globlit' });
 });
 
 if (!process.env.NEWS_API_KEY) console.warn('WARNING: NEWS_API_KEY is not set. News proxy endpoints will fail.');
