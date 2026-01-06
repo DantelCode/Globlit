@@ -180,7 +180,7 @@
           revealFeatureCards(true); // hide cards so they can reveal again when scrolling down
         }
       });
-    }, { threshold: 0.22 });
+    }, { threshold: 0.5 }); //0.22
 
     obs.observe(features);
   }

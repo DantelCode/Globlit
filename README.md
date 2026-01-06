@@ -3,6 +3,9 @@ Globlit is a modern, fast, and elegant news web application that delivers curate
 > **Read smarter. Scroll less. Stay informed.**
 
 
+### Live Site: https://globlit.onrender.com
+
+
 ## ✨ Features
 
 ### 📰 News & Discovery
@@ -173,4 +176,6 @@ If you like this project:
 * 💡 Suggest features
 
 
+
 **Globlit — News that feels native.** 🌍📰
+
