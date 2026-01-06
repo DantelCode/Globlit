@@ -179,15 +179,15 @@
   height: 18px;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 800px) {
   .themeBtn {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
   }
 
   .icon {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
 }
 
@@ -840,4 +840,5 @@ hr {
 .history-item small {
   font-size: .75rem;
   opacity: .6;
+
 }
