@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "a full stack personalized news apps",
   "engines": {
-    "node": "24.x"
+    "node": "20.x"
   },
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "node server.js"
   },
   "keywords": ["EJS", "CSS3", "Vanilla Javascript", "MongoDB", "NewsApi", "Geo-location", "OAuth"],
   "author": "DantelCode",

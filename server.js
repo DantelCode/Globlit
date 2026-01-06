@@ -58,7 +58,7 @@ if (sessionStore) sessionConfig.store = sessionStore;
 
 app.use(session(sessionConfig));
 
-// Passport
+Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -89,17 +89,6 @@ app.get("/home", ensureAuth, (req, res) => {
   res.render("home", { title: "Globlit" });
 });
 
-
-// Start server
-const PORT = process.env.PORT;
-
 if (!process.env.NEWS_API_KEY) console.warn('WARNING: NEWS_API_KEY is not set. News proxy endpoints will fail.');
 
-// Start server only when this file is run directly. This makes local dev and requires/imports safe.
-if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`GLOBLIT SERVER STARTED AT PORT ${PORT}`);
-  });
-}
-
-module.exports = app; // Vercel usage
+module.exports = app;

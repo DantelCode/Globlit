@@ -18,7 +18,10 @@
 /* Splash overlay */
 #splash {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: grid;
     place-items: center;
     background: linear-gradient(180deg, rgba(16, 25, 40, 1), rgba(16, 25, 40, 1));
@@ -223,11 +226,6 @@ header {
     height: 100dvh;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-}
-
-/* Hero parallax & CTA Buttons */
-.hero-parallax {
-    overflow: visible;
 }
 
 .hero-content {
@@ -569,7 +567,13 @@ header {
 @media (max-width: 900px) {
     .hero {
         position: relative;
+        width: 100%;
         grid-template-columns: 1fr;
+    }
+
+    .globe-deco {
+        width: 370px;
+        height: 370px;
     }
 
     .hero-content {
@@ -604,7 +608,7 @@ header {
     .globe-deco.centered {
         position: absolute;
         left: 0;
-        top: 50%;
+        top: calc(100dvh - 50%);
         transform: translate(0%, 90%) scale(1.1);
         width: 90vw;
         height: 90vw;
@@ -633,12 +637,50 @@ header {
         top: 68%;
         right: 6%;
     }
+
+    .signup-cta {
+        padding: 2rem 16px;
+        height: fit-content;
+    }
+
+    .signup-card {
+        padding: 0;
+    }
 }
 
 /* Small responsive tweak */
-@media (max-width: 520px) {
+@media (max-width: 400px) {
     .splash-globe {
         width: 120px;
         height: 120px;
+    }
+
+    .globe-deco.centered {
+        position: absolute;
+        left: 5%;
+        top: 75%;
+        transform: translate(0%, 90%) scale(1.1);
+        width: 90vw;
+        height: 90vw;
+    }
+}
+
+.text-appear {
+    animation: text-appear;
+    animation-timeline: view();
+}
+
+@keyframes text-appear {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    50% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-10px);
     }
 }
