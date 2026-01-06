@@ -138,6 +138,7 @@
     .signinContainer {
         grid-template-columns: 1fr;
         position: relative;
+        width: 90%;
     }
 
     .vidContainer img {
@@ -170,11 +171,13 @@
 .subTitle {
     color: var(--muted-tint);
     margin-top: -1rem;
+    text-align: center;
 }
 
     .signIn {
         height: 100%;
         padding: 0;
-        gap: 70%;
+        gap: 80%;
     }
+
 }
