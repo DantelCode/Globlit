@@ -7,8 +7,8 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const expressLayouts = require("express-ejs-layouts");
 const mongoose = require("mongoose");
-const passport = require("passport");
 const path = require("path");
+const passport = require("passport");
 
 // MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -91,4 +91,9 @@ app.get("/home", ensureAuth, (req, res) => {
 
 if (!process.env.NEWS_API_KEY) console.warn('WARNING: NEWS_API_KEY is not set. News proxy endpoints will fail.');
 
-module.exports = app;
+// Start server only when this file is run directly. This makes local dev and requires/imports safe.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`GLOBLIT SERVER STARTED AT PORT ${PORT}`);
+  });
+}
