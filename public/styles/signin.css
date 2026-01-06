@@ -150,8 +150,8 @@
         border-left: none;
         position: absolute;
         top: 0;
-        /* left: 0; */
-        width: 90%;
+        left: 0;
+        width: 100%;
         height: 100vh;
         height: 100dvh;
         justify-content: flex-start;
@@ -171,6 +171,7 @@
     color: var(--muted-tint);
     margin-top: -1rem;
     text-align: center;
+    width: 95%;
 }
 
     .signIn {
@@ -179,5 +180,9 @@
         gap: 80%;
     }
 
+    a {
+        width: 95%;
+    }
 }
+
 
