@@ -138,7 +138,6 @@
     .signinContainer {
         grid-template-columns: 1fr;
         position: relative;
-        width: 90%;
     }
 
     .vidContainer img {
@@ -151,8 +150,8 @@
         border-left: none;
         position: absolute;
         top: 0;
-        left: 0;
-        width: 100%;
+        /* left: 0; */
+        width: 90%;
         height: 100vh;
         height: 100dvh;
         justify-content: flex-start;
@@ -181,3 +180,4 @@
     }
 
 }
+
