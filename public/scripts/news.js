@@ -537,65 +537,6 @@ function openArticle(a) {
 
 backBtn.onclick = () => toggleArticle(false);
 
-
-/* ================== SWIPE TO CLOSE (MOBILE) ================== */
-article.addEventListener("touchstart", (e) => {
-  if (!article.classList.contains("open")) return;
-
-  const touch = e.touches[0];
-  touchStartX = touch.clientX;
-  touchStartY = touch.clientY;
-  touchDeltaX = 0;
-  touchDeltaY = 0;
-  isSwipingArticle = true;
-
-  article.style.transition = "none";
-}, { passive: true });
-
-article.addEventListener("touchmove", (e) => {
-  if (!isSwipingArticle || !article.classList.contains("open")) return;
-
-  const touch = e.touches[0];
-  touchDeltaX = touch.clientX - touchStartX;
-  touchDeltaY = touch.clientY - touchStartY;
-
-  // Only allow swipe if horizontal OR vertical is dominant
-  if (Math.abs(touchDeltaX) > Math.abs(touchDeltaY)) {
-    // Horizontal swipe (right to left or left to right)
-    article.style.transform = `translateX(${Math.max(touchDeltaX, 0)}px)`;
-  } else {
-    // Vertical swipe (top to bottom)
-    article.style.transform = `translateY(${Math.max(touchDeltaY, 0)}px)`;
-  }
-}, { passive: true });
-
-article.addEventListener("touchend", () => {
-  if (!isSwipingArticle) return;
-  isSwipingArticle = false;
-
-  const SWIPE_THRESHOLD = 120;
-
-  const shouldClose =
-    touchDeltaX > SWIPE_THRESHOLD ||
-    touchDeltaY > SWIPE_THRESHOLD;
-
-  article.style.transition = "transform 0.3s ease";
-
-  if (shouldClose) {
-    article.style.transform = "translateX(100%)";
-
-    setTimeout(() => {
-      article.style.transform = "";
-      article.style.transition = "";
-      toggleArticle(false);
-    }, 300);
-  } else {
-    // Snap back
-    article.style.transform = "";
-  }
-});
-
-
 /* ================== SHARE ================== */
 shareBtn.onclick = async () => {
   if (!currentArticle) return;
@@ -688,3 +629,4 @@ window.addEventListener("popstate", (e) => {
     toggleArticle(false);
   }
 });
+
