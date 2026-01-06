@@ -172,6 +172,7 @@
     margin-top: -1rem;
     text-align: center;
     width: 95%;
+    place-self: center;
 }
 
     .signIn {
@@ -182,7 +183,9 @@
 
     a {
         width: 95%;
+    place-self: center;
     }
 }
+
 
 
