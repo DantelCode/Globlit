@@ -186,9 +186,10 @@
 }
 
 .searchBar {
-  padding: .1rem 0.5rem;
+  gap: 2px;
+  padding: .1rem 4px;
 }
-  .tools header { gap: 4px; }
+  .tools header { gap: 8px; }
 .home .right_header {
   gap: 4px;
 }
@@ -854,4 +855,5 @@ hr {
   opacity: .6;
 
 }
+
 
