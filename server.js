@@ -7,7 +7,6 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const expressLayouts = require("express-ejs-layouts");
 const mongoose = require("mongoose");
-const passport = require("passport");
 const path = require("path");
 
 // MongoDB
@@ -101,5 +100,6 @@ if (require.main === module) {
     console.log(`GLOBLIT SERVER STARTED AT PORT ${PORT}`);
   });
 }
+
 
 module.exports = app; // Vercel usage
