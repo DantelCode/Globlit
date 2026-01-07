@@ -159,11 +159,11 @@ Globlit supports reading articles aloud using the browser’s native Speech Synt
 ![Globlit Screenshot 3](https://github.com/DantelCode/Globlit/blob/main/screenshots/home.png)
 
 ## 🧑‍💻 Author
-
-**Chukwunonso Daniel**
+**Ezekwenna Chukwunonso Daniel**
 Frontend & Full-Stack Developer
-* Portfolio: *(add link)*
-* Twitter / X: *(add link)*
+* Portfolio: dantel-sigma.vercel.app
+* LinkedIn: @chukwunonso-ezekwenna
+* Facebook: @chukwunonso-ezekwenna
 
 
 ## 📄 License
@@ -180,5 +180,6 @@ If you like this project:
 
 
 **Globlit — News that feels native.** 🌍📰
+
 
 
